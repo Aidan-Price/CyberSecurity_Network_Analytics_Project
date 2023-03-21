@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve, auc
 from tensorflow import keras
 from tensorflow.keras import layers
+from pyod.models.auto_encoder import AutoEncoder
 
 def load_csv(file_path):
     """
@@ -84,21 +85,18 @@ def train_MLP(X_train, y_train, X_valid, y_valid):
               validation_data = (X_valid, y_valid))
     return model
 
-def train_CNN(X_train, y_train, X_valid, y_valid):
+def train_CNN(X_train):
     """
-    build, compile, and fit a CNN model on the data.
+    build, compile, and fit a CNN autoencoder model on the data
     args:
-        X_train, y_train, X_valid, y_valid: training and validation sets
+        X_train: training set
     returns:
         trained CNN model
     """
-    model = Sequential()
-    model.add(Conv1D(filters = 32, kernel_size = 3, activation = 'relu', 
-                     input_shape = (X_train.shape[1], 1)))
-    model.add(Dense(1, activation = 'sigmoid'))
-    model.compile(loss = 'binary_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
-    model.fit(X_train, y_train, batch_size = 32, epochs = 10, 
-              validation_data = (X_valid, y_valid))
+    model = AutoEncoder(contamination = 0.05, hidden_neurons = [5, 5],
+                        epochs = 8, optimizer = 'Nadam', 
+                        loss = 'binary_crossentropy')
+    model.fit(X_train)
     return model
 
 def evaluate_model(model, X_test, y_test):
@@ -150,7 +148,7 @@ def main():
     if args.model_type == 'LSTM':
         model = train_CNN(X_train, y_train, X_valid, y_valid)  
     elif args.model_type == 'MLP':
-        model = train_CNN(X_train, y_train, X_valid, y_valid) 
+        model = train_CNN(X_train) 
     elif args.model_type == 'CNN':
         model = train_CNN(X_train, y_train, X_valid, y_valid) 
     
