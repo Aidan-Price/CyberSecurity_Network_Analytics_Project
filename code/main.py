@@ -110,7 +110,7 @@ def evaluate_model(model, X_test, y_test):
     returns: 
         precision, recall, and AUC scores
     """
-    y_pred = model.predict(X_test)
+    y_pred = (model.predict(X_test) > 0.5).astype(int)
     precision, recall, thresholds = precision_recall_curve(y_test, y_pred)
     area_under_curve = auc(recall, precision)
     return precision, recall, area_under_curve
