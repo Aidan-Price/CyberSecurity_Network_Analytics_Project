@@ -5,8 +5,11 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import precision_recall_curve, auc
 from tensorflow import keras
-from tensorflow.keras import layers
-from pyod.models.auto_encoder import AutoEncoder
+from keras import layers
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, BatchNormalization, Embedding
+# from pyod.models.auto_encoder import AutoEncoder
+# commented out pyod b/c does not work on python > 3.11.1
 
 def load_csv(file_path):
     """
@@ -89,19 +92,20 @@ def train_NN(X_train, y_train, X_valid, y_valid):
               validation_data = (X_valid, y_valid))
     return model
 
-def train_CNN(X_train):
-    """
-    build, compile, and fit a CNN autoencoder model on the data
-    args:
-        X_train: training set
-    returns:
-        trained CNN model
-    """
-    model = AutoEncoder(contamination = 0.05, hidden_neurons = [5, 5],
-                        epochs = 8, optimizer = 'Nadam', 
-                        loss = 'binary_crossentropy')
-    model.fit(X_train)
-    return model
+# does not work - need < python 3.11.1
+#def train_CNN(X_train):
+#    """
+#    build, compile, and fit a CNN autoencoder model on the data
+#    args:
+#        X_train: training set
+#    returns:
+#        trained CNN model
+#    """
+#    model = AutoEncoder(contamination = 0.05, hidden_neurons = [5, 5],
+#                        epochs = 8, optimizer = 'Nadam', 
+#                        loss = 'binary_crossentropy')
+#    model.fit(X_train)
+#    return model
 
 def evaluate_model(model, X_test, y_test):
     """
